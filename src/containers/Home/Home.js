@@ -2,6 +2,10 @@ import React from "react";
 import { SideBar } from "../SideBar/SideBar";
 import "./Home.scss";
 import { HomeContent } from "./HomeContent/HomeContent";
+import { connect } from "react-redux";
+import * as videoActions from "../../store/actions/video";
+import { bindActionCreators } from "redux";
+import { getYoutubeLibraryLoaded } from "../../store/reducers/api";
 
 export class Home extends React.Component {
   render() {
@@ -12,4 +16,29 @@ export class Home extends React.Component {
       </React.Fragment>
     );
   }
+
+  componentDidMount() {
+    if (this.props.youtubeLibraryLoaded) {
+      this.props.fetchMostPopularVideos();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.youtubeLibraryLoaded !== prevProps.youtubeLibraryLoaded) {
+      this.props.fetchMostPopularVideos();
+    }
+  }
 }
+
+function mapStateToProps(state) {
+  return {
+    youtubeLibraryLoaded: getYoutubeLibraryLoaded(state)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  const fetchMostPopularVideos = videoActions.mostPopular.request;
+  return bindActionCreators({ fetchMostPopularVideos }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
