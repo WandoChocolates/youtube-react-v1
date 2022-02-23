@@ -1,3 +1,4 @@
+import { createSelector } from "reselect";
 import { MOST_POPULAR } from "../actions/video";
 import { SUCCESS } from "../actions";
 
@@ -37,3 +38,17 @@ function reduceFetchMostPopularVideos(response, prevState) {
     byId: { ...prevState.byId, ...videoMap }
   };
 }
+
+/*
+ *   Selectors
+ * */
+export const getMostPopularVideos = createSelector(
+  (state) => state.videos.byId,
+  (state) => state.videos.mostPopular,
+  (videosById, mostPopular) => {
+    if (!mostPopular || !mostPopular.items) {
+      return [];
+    }
+    return mostPopular.items.map((videoId) => videosById[videoId]);
+  }
+);

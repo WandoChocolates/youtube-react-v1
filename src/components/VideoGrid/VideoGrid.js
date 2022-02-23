@@ -5,24 +5,18 @@ import { VideoGridHeader } from "./VideoGridHeader/VideoGridHeader";
 import { VideoPreview } from "../VideoPreview/VideoPreview";
 
 export function VideoGrid(props) {
+  if (!props.videos || !props.videos.length) {
+    return <div />;
+  }
+  const gridItems = props.videos.map((video) => {
+    return <VideoPreview video={video} key={video.id} />;
+  });
+
   const divider = props.hideDivider ? null : <Divider />;
   return (
     <React.Fragment>
       <VideoGridHeader title="Trending" />
-      <div className="video-grid">
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-        <VideoPreview />
-      </div>
+      <div className="video-grid">{gridItems}</div>
       {divider}
     </React.Fragment>
   );
