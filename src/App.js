@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { AppLayout } from "./components/AppLayout/AppLayout";
-import { Home } from "./containers/Home/Home";
+import Home from "./containers/Home/Home";
 import { Routes, Route } from "react-router-dom";
 import { Watch } from "./containers/Watch/Watch";
 import { bindActionCreators } from "redux";
