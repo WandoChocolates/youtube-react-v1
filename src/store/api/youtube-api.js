@@ -1,10 +1,11 @@
 export function buildMostPopularVideosRequest(
   amount = 12,
   loadDescription = false,
-  nextPageToken
+  nextPageToken,
+  videoCategoryId = null
 ) {
   let fields =
-    "nextPageToken,prevPageToken,items(contentDetails/duration,id,snippet(channelId,channelTitle,localized/title,publishedAt,thumbnails/medium,title),statistics/viewCount),pageInfo(totalResults)";
+    "nextPageToken,prevPageToken,items(contentDetails/duration,id,snippet(channelId,channelTitle,publishedAt,thumbnails/medium,title),statistics/viewCount),pageInfo(totalResults)";
   if (loadDescription) {
     fields += ",items/snippet/description";
   }
@@ -17,7 +18,8 @@ export function buildMostPopularVideosRequest(
       maxResults: amount,
       regionCode: "US",
       pageToken: nextPageToken,
-      fields
+      fields,
+      videoCategoryId
     },
     null
   );
