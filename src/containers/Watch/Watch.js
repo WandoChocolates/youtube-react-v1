@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "./Watch.scss";
-import { RelatedVideos } from "../../components/RelatedVideos/RelatedVideos";
-import { Video } from "../../components/Video/Video";
-import { VideoMetadata } from "../../components/VideoMetadata/VideoMetadata";
-import { VideoInfoBox } from "../../components/VideoInfoBox/VideoInfoBox";
-import { Comments } from "../Comments/Comments";
+import React, { useEffect } from "react";
+import WatchContent from "./WatchContent/WatchContent";
 
 import { bindActionCreators } from "redux";
 import * as watchActions from "../../store/actions/watch";
@@ -22,15 +17,9 @@ export function Watch(props) {
     fetchWatchContent();
   }, [props.youtubeLibraryLoaded]);
 
-  return (
-    <div className="watch-grid">
-      <Video className="video" id="-7fuHEEmEjs" />
-      <VideoMetadata className="metadata" viewCount={1000} />
-      <VideoInfoBox className="video-info-box" />
-      <Comments className="comments" />
-      <RelatedVideos className="relatedVideos" />
-    </div>
-  );
+  const videoId = getVideoId();
+
+  return <WatchContent videoId={videoId} />;
 
   function getVideoId() {
     return getSearchParam(location, "v");
