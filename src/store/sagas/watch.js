@@ -3,18 +3,23 @@ import * as watchActions from "../actions/watch";
 import { REQUEST } from "../actions";
 import {
   buildVideoDetailRequest,
-  buildRelatedVideosRequest
+  buildRelatedVideosRequest,
+  buildChannelRequest
 } from "../api/youtube-api";
 import {
   SEARCH_LIST_RESPONSE,
   VIDEO_LIST_RESPONSE
 } from "../api/youtube-api-response-types";
 
-export function* fetchWatchDetails(videoId) {
+export function* fetchWatchDetails(videoId, channelId) {
   let requests = [
     buildVideoDetailRequest.bind(null, videoId),
     buildRelatedVideosRequest.bind(null, videoId)
   ];
+
+  if (channelId) {
+    requests.push(buildChannelRequest.bind(null, channelId));
+  }
 
   try {
     const responses = yield all(requests.map((fn) => call(fn)));
