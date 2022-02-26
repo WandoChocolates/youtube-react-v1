@@ -1,10 +1,16 @@
 import { fork, take, all, put, call } from "redux-saga/effects";
 import * as watchActions from "../actions/watch";
 import { REQUEST } from "../actions";
-import { buildVideoDetailRequest } from "../api/youtube-api";
+import {
+  buildVideoDetailRequest,
+  buildRelatedVideosRequest
+} from "../api/youtube-api";
 
 export function* fetchWatchDetails(videoId) {
-  let requests = [buildVideoDetailRequest.bind(null, videoId)];
+  let requests = [
+    buildVideoDetailRequest.bind(null, videoId),
+    buildRelatedVideosRequest.bind(null, videoId)
+  ];
 
   try {
     const responses = yield all(requests.map((fn) => call(fn)));
