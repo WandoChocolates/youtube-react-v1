@@ -5,7 +5,7 @@ import {
   MOST_POPULAR_BY_CATEGORY
 } from "../actions/video";
 import { SUCCESS } from "../actions";
-import { WATCH_DETAILS } from "../actions/watch";
+import { WATCH_DETAILS, VIDEO_DETAILS } from "../actions/watch";
 import {
   VIDEO_LIST_RESPONSE,
   SEARCH_LIST_RESPONSE
@@ -29,6 +29,8 @@ export default function videos(state = initialState, action) {
       );
     case WATCH_DETAILS[SUCCESS]:
       return reduceWatchDetails(action.response, state);
+    case VIDEO_DETAILS[SUCCESS]:
+      return reduceVideoDetails(action.response, state);
     default:
       return state;
   }
@@ -154,6 +156,28 @@ function reduceRelatedVideosRequest(responses) {
   };
 }
 
+function reduceVideoDetails(responses, prevState) {
+  const videoResponses = responses.filter(
+    (response) => response.result.kind === VIDEO_LIST_RESPONSE
+  );
+  const parsedVideos = videoResponses.reduce((videoMap, response) => {
+    // we're explicitly asking for a video with a particular id
+    // so the response set must either contain 0 items (if a video with the id does not exist)
+    // or at most one item (i.e. the channel we've been asking for)
+    const video = response.result.items ? response.result.items[0] : null;
+    if (!video) {
+      return videoMap;
+    }
+    videoMap[video.id] = video;
+    return videoMap;
+  }, {});
+
+  return {
+    ...prevState,
+    byId: { ...prevState.byId, ...parsedVideos }
+  };
+}
+
 /*
  *   Selectors
  * */
@@ -211,3 +235,21 @@ export const videosByCategoryLoaded = createSelector(
 export const getVideoById = (state, videoId) => {
   return state.videos.byId[videoId];
 };
+
+const getRelatedVideoIds = (state, videoId) => {
+  const related = state.videos.related[videoId];
+  return related ? related.items : [];
+};
+export const getRelatedVideos = createSelector(
+  getRelatedVideoIds,
+  (state) => state.videos.byId,
+  (relatedVideoIds, videos) => {
+    if (relatedVideoIds) {
+      // filter kicks out null values we might have
+      return relatedVideoIds
+        .map((videoId) => videos[videoId])
+        .filter((video) => video);
+    }
+    return [];
+  }
+);

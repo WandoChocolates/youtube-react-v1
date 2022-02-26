@@ -7,7 +7,7 @@ import { RelatedVideos } from "../../../components/RelatedVideos/RelatedVideos";
 import "./WatchContent.scss";
 
 import { connect } from "react-redux";
-import { getVideoById } from "../../../store/reducers/videos";
+import { getRelatedVideos, getVideoById } from "../../../store/reducers/videos";
 
 class WatchContent extends React.Component {
   render() {
@@ -21,7 +21,10 @@ class WatchContent extends React.Component {
         <VideoMetadata className="metadata" video={this.props.video} />
         <VideoInfoBox className="video-info-box" video={this.props.video} />
         <Comments className="comments" />
-        <RelatedVideos className="relatedVideos" />
+        <RelatedVideos
+          className="relatedVideos"
+          videos={this.props.relatedVideos}
+        />
       </div>
     );
   }
@@ -29,6 +32,7 @@ class WatchContent extends React.Component {
 
 function mapStateToProps(state, props) {
   return {
+    relatedVideos: getRelatedVideos(state, props.videoId),
     video: getVideoById(state, props.videoId)
   };
 }
