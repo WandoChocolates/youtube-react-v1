@@ -20,11 +20,11 @@ class WatchContent extends React.Component {
       <div className="watch-grid">
         <Video className="video" id={this.props.videoId} />
         <VideoMetadata className="metadata" video={this.props.video} />
-        <VideoInfoBox
+        {/*<VideoInfoBox
           className="video-info-box"
           video={this.props.video}
           channel={this.props.channel}
-        />
+        /> */}
         <Comments className="comments" />
         <RelatedVideos
           className="relatedVideos"

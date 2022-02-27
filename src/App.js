@@ -22,7 +22,10 @@ function App(props) {
     <AppLayout>
       <Routes>
         <Route exact path="/" element={<Home />} />
-        <Route path="/watch" element={<Watch key={location.key} />} />
+        <Route
+          path="/watch"
+          element={<Watch key={location.key} location={location} />}
+        />
       </Routes>
     </AppLayout>
   );

@@ -4,7 +4,8 @@ import { REQUEST } from "../actions";
 import {
   buildVideoDetailRequest,
   buildRelatedVideosRequest,
-  buildChannelRequest
+  buildChannelRequest,
+  buildCommentThreadRequest
 } from "../api/youtube-api";
 import {
   SEARCH_LIST_RESPONSE,
@@ -14,7 +15,8 @@ import {
 export function* fetchWatchDetails(videoId, channelId) {
   let requests = [
     buildVideoDetailRequest.bind(null, videoId),
-    buildRelatedVideosRequest.bind(null, videoId)
+    buildRelatedVideosRequest.bind(null, videoId),
+    buildCommentThreadRequest.bind(null, videoId)
   ];
 
   if (channelId) {
@@ -23,17 +25,10 @@ export function* fetchWatchDetails(videoId, channelId) {
 
   try {
     const responses = yield all(requests.map((fn) => call(fn)));
-    yield put(watchActions.details.success(responses));
+    yield put(watchActions.details.success(responses, videoId));
     yield call(fetchVideoDetails, responses, channelId === null);
   } catch (error) {
     yield put(watchActions.details.failure(error));
-  }
-}
-
-export function* watchWatchDetails() {
-  while (true) {
-    const { videoId } = yield take(watchActions.WATCH_DETAILS[REQUEST]);
-    yield fork(fetchWatchDetails, videoId);
   }
 }
 
@@ -64,10 +59,23 @@ function* fetchVideoDetails(responses, shouldFetchChannelInfo) {
       );
     }
   }
+
   try {
     const responses = yield all(requests.map((fn) => call(fn)));
     yield put(watchActions.videoDetails.success(responses));
   } catch (error) {
     yield put(watchActions.videoDetails.failure(error));
+  }
+}
+
+/******************************************************************************/
+/******************************* WATCHERS *************************************/
+/******************************************************************************/
+export function* watchWatchDetails() {
+  while (true) {
+    const { videoId, channelId } = yield take(
+      watchActions.WATCH_DETAILS[REQUEST]
+    );
+    yield fork(fetchWatchDetails, videoId, channelId);
   }
 }

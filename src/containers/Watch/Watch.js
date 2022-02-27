@@ -4,10 +4,8 @@ import WatchContent from "./WatchContent/WatchContent";
 import { bindActionCreators } from "redux";
 import * as watchActions from "../../store/actions/watch";
 import { connect } from "react-redux";
-import {
-  getYoutubeLibraryLoaded,
-  getChannelId
-} from "../../store/reducers/api";
+import { getYoutubeLibraryLoaded } from "../../store/reducers/api";
+import { getChannelId } from "../../store/reducers/videos";
 
 import { getSearchParam } from "../../services/url";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,7 +20,7 @@ export function Watch(props) {
 
   const videoId = getVideoId();
 
-  return <WatchContent videoId={videoId} channelId={this.props.channelId} />;
+  return <WatchContent videoId={videoId} channelId={props.channelId} />;
 
   function getVideoId() {
     return getSearchParam(location, "v");

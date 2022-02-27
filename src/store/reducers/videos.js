@@ -15,7 +15,10 @@ import { getSearchParam } from "../../services/url";
 
 const initialState = {
   byId: {},
-  mostPopular: {}
+  mostPopular: {},
+  categories: {},
+  byCategory: {},
+  related: {}
 };
 export default function videos(state = initialState, action) {
   switch (action.type) {
