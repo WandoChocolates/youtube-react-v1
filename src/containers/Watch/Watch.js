@@ -6,6 +6,8 @@ import * as watchActions from "../../store/actions/watch";
 import { connect } from "react-redux";
 import { getYoutubeLibraryLoaded } from "../../store/reducers/api";
 import { getChannelId } from "../../store/reducers/videos";
+import * as commentActions from "../../store/actions/comment";
+import { getCommentNextPageToken } from "../../store/reducers/comments";
 
 import { getSearchParam } from "../../services/url";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,7 +22,20 @@ export function Watch(props) {
 
   const videoId = getVideoId();
 
-  return <WatchContent videoId={videoId} channelId={props.channelId} />;
+  const fetchMoreComments = () => {
+    if (props.nextPageToken) {
+      props.fetchCommentThread(getVideoId(), props.nextPageToken);
+    }
+  };
+
+  return (
+    <WatchContent
+      videoId={videoId}
+      channelId={props.channelId}
+      bottomReachedCallback={fetchMoreComments}
+      nextPageToken={props.nextPageToken}
+    />
+  );
 
   function getVideoId() {
     return getSearchParam(location, "v");
@@ -40,13 +55,18 @@ export function Watch(props) {
 function mapStateToProps(state, props) {
   return {
     youtubeLibraryLoaded: getYoutubeLibraryLoaded(state),
-    channelId: getChannelId(state, props.location, "v")
+    channelId: getChannelId(state, props.location, "v"),
+    nextPageToken: getCommentNextPageToken(state, props.location)
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const fetchWatchDetails = watchActions.details.request;
-  return bindActionCreators({ fetchWatchDetails }, dispatch);
+  const fetchCommentThread = commentActions.thread.request;
+  return bindActionCreators(
+    { fetchWatchDetails, fetchCommentThread },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Watch);
